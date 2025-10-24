@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Contratación Triple Play</title>
+    <style>
+        body { font-family: Arial; margin: 30px; }
+        h2 { color: darkblue; }
+        .resumen { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+        label { display: block; margin-top: 8px; }
+        button { margin-top: 12px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+
+    <h2>--- CONTRATACIÓN DE SERVICIO TRIPLE PLAY ---</h2>
+
+    <label>Tipo de cliente:</label>
+    <select id="tipoCliente">
+        <option value="0">Salir</option>
+        <option value="1">Nuevo</option>
+        <option value="2">Existente</option>
+    </select>
+
+    <div id="servicios">
+        <label><input type="checkbox" id="internet"> Internet ($200)</label>
+        <label><input type="checkbox" id="telefonia"> Telefonía ($100)</label>
+        <label><input type="checkbox" id="streaming"> Streaming ($500)</label>
+    </div>
+
+    <button onclick="calcular()">Calcular Total</button>
+
+    <div id="resultado" class="resumen"></div>
+
+    <script>
+        function calcular() {
+            const PRECIO_INTERNET = 200;
+            const PRECIO_TELEFONIA = 100;
+            const PRECIO_STREAMING = 500;
+
+            let tipoCliente = parseInt(document.getElementById('tipoCliente').value);
+            let internet = document.getElementById('internet').checked ? 1 : 0;
+            let telefonia = document.getElementById('telefonia').checked ? 1 : 0;
+            let streaming = document.getElementById('streaming').checked ? 1 : 0;
+
+            let costoTotal = 0;
+            let descuento = 0;
+
+            // Si el usuario elige salir
+            if (tipoCliente === 0) {
+                document.getElementById('resultado').innerHTML = "<b>Fin de la contratación.</b>";
+                return;
+            }
+
+            // Calcular costo base
+            if (internet) costoTotal += PRECIO_INTERNET;
+            if (telefonia) costoTotal += PRECIO_TELEFONIA;
+            if (streaming) costoTotal += PRECIO_STREAMING;
+
+            // Aplicar descuento
+            if (tipoCliente === 1) { // Nuevo
+                if (internet && telefonia && streaming) descuento = costoTotal * 0.20;
+                else if ((internet + telefonia + streaming) === 2) descuento = costoTotal * 0.10;
+                else if ((internet + telefonia + streaming) === 1) descuento = costoTotal * 0.05;
+            } else if (tipoCliente === 2) { // Existente
+                if (internet && telefonia && streaming) descuento = costoTotal * 0.05;
+            } else {
+                document.getElementById('resultado').innerHTML = "Opción de cliente no válida.";
+                return;
+            }
+
+            // Calcular total final
+            let totalPagar = costoTotal - descuento;
+
+            // Mostrar resumen
+            document.getElementById('resultado').innerHTML = `
+                <h3>--- RESUMEN DE LA CONTRATACIÓN ---</h3>
+                <p>Costo total antes del descuento: $${(costoTotal).toFixed(2)}</p>
+                <p>Descuento aplicado: $${(descuento).toFixed(2)}</p>
+                <p><b>Total a pagar: $${(totalPagar).toFixed(2)}</b></p>
+            `;
+        }
+    </script>
+</body>
+</html>
